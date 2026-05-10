@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פלאפונים כשרים - כהן תקשורת</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&family=VT323&display=swap');
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none; /* מניעת סימון טקסט בטעות בעת לחיצות */
+        }
+
+        /* גוף המכשיר */
+        .phone-container {
+            width: 340px;
+            height: 760px;
+            background: linear-gradient(145deg, #1f1f1f, #121212);
+            border-radius: 45px;
+            box-shadow: 
+                20px 20px 40px rgba(0, 0, 0, 0.4), 
+                -10px -10px 20px rgba(255, 255, 255, 0.05),
+                inset 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+            padding: 25px 20px 30px 20px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #333;
+        }
+
+        /* רמקול עליון */
+        .phone-speaker {
+            width: 60px;
+            height: 6px;
+            background-color: #0a0a0a;
+            border-radius: 10px;
+            margin: 0 auto 20px auto;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+            border: 1px solid #2a2a2a;
+        }
+
+        /* מסגרת המסך */
+        .phone-screen-bezel {
+            background-color: #050505;
+            border-radius: 15px;
+            padding: 8px;
+            flex-grow: 1;
+            min-height: 0; /* שומר שהמסך לא ידחוף את שאר האלמנטים */
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 0 10px rgba(0,0,0,1);
+        }
+
+        /* המסך עצמו */
+        .phone-screen {
+            flex-grow: 1;
+            min-height: 0; /* מונע מהמסך לחרוג מגבולות המכשיר */
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s;
+        }
+
+        /* מצב רטרו למשחק הנחש */
+        .phone-screen.retro-mode {
+            background-color: #8bac0f; /* ירוק גיימבוי/נוקיה ישן */
+            color: #0f380f;
+        }
+
+        /* שורת סטטוס */
+        .status-bar {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-size: 11px;
+            padding: 3px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: bold;
+        }
+
+        .retro-mode .status-bar {
+            background-color: #9bbc0f;
+            color: #0f380f;
+            border-bottom: 1px solid #0f380f;
+        }
+
+        /* תוכן המסך */
+        .screen-content {
+            padding: 15px;
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .screen-content::-webkit-scrollbar { width: 4px; }
+        .screen-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+
+        /* אזור מקשים */
+        .keypad-container {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 10px;
+        }
+
+        /* כפתור מקש */
+        .key-btn {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 
+                3px 3px 6px rgba(0,0,0,0.5), 
+                -2px -2px 5px rgba(255,255,255,0.05),
+                inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: all 0.1s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* אפקט לחיצה (משתמשים גם ב-class כדי להפעיל מהמקלדת) */
+        .key-btn:active, .key-btn.active-press {
+            transform: scale(0.95) translateY(2px);
+            box-shadow: 
+                1px 1px 2px rgba(0,0,0,0.5), 
+                inset 2px 2px 5px rgba(0,0,0,0.5);
+            background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+        }
+
+        .key-number { font-size: 1.4rem; font-weight: bold; line-height: 1; }
+        .key-letters { font-size: 0.65rem; color: #9ca3af; margin-top: 3px; letter-spacing: 1px;}
+
+        /* כפתורי ניווט חכמים */
+        .nav-keys {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(145deg, #333, #222);
+            border-radius: 12px;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
+            border: none;
+            transition: all 0.1s;
+        }
+        .nav-btn:active, .nav-btn.active-press {
+            transform: scale(0.95) translateY(2px);
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        .nav-btn-call { background: linear-gradient(145deg, #16a085, #1abc9c); color: #fff;}
+        .nav-btn-end { background: linear-gradient(145deg, #c0392b, #e74c3c); color: #fff;}
+        .nav-btn-center { font-size: 0.75rem; font-weight: bold; }
+
+        /* הסתרת אזורים */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.2s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* משחק הנחש */
+        #snakeCanvas {
+            background-color: #9bbc0f;
+            border: 2px solid #0f380f;
+            border-radius: 4px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+        .snake-font {
+            font-family: 'VT323', monospace, 'Heebo';
+        }
+        
+        /* תפריט מוקטן דמוי טלפון */
+        .menu-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item .icon {
+            width: 24px;
+            height: 24px;
+            background-color: #eff6ff;
+            color: #3b82f6;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <div class="phone-speaker"></div>
+
+        <div class="phone-screen-bezel">
+            <div class="phone-screen" id="display-screen">
+                
+                <!-- שורת סטטוס -->
+                <div class="status-bar">
+                    <span class="flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
+                        כשר
+                    </span>
+                    <span id="clock">12:00</span>
+                    <span class="flex items-center gap-1">
+                        100%
+                        <svg class="w-4 h-4 transform -rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm14 1H4v8h12V6zM7 7h8v6H7V7z"></path></svg>
+                    </span>
+                </div>
+
+                <div class="screen-content" id="main-content">
+                    
+                    <!-- עמוד בית -->
+                    <div id="home-section" class="section active text-center">
+                        <div class="mt-4 mb-6">
+                            <h1 class="text-2xl font-bold text-gray-800 tracking-tight">כהן תקשורת</h1>
+                            <p class="text-sm text-gray-500">העולם הכשר שלך</p>
+                        </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm mb-4 shadow-sm">
+                            <p class="font-bold text-blue-800">מבצע!</p>
+                            <p class="text-blue-600">נוקיה כשר ב-199₪</p>
+                        </div>
+
+                        <div class="text-right bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="menu-item">
+                                <span class="font-bold text-gray-400 ml-2">1</span> קטלוג מכשירים
+                            </div>
+                            <div class="menu-item">
+                                <span class="font-bold text-gray-400 ml-2">2</span> מי אנחנו
+                            </div>
+                            <div class="menu-item">
+                                <span class="font-bold text-gray-400 ml-2">3</span> צור קשר
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- קטלוג -->
+                    <div id="catalog-section" class="section">
+                        <h2 class="text-lg font-bold mb-3 border-b-2 border-blue-500 pb-1 inline-block">קטלוג</h2>
+                        <div class="space-y-3 mt-2">
+                            <div class="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                                <h3 class="font-bold text-gray-800">נוקיה 215 כשר</h3>
+                                <p class="text-xs text-gray-500 mb-2">דור 4, בטריה חזקה, שמע מצוין.</p>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">₪250</span>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                                <h3 class="font-bold text-gray-800">סמסונג E1200</h3>
+                                <p class="text-xs text-gray-500 mb-2">פשוט, אמין וחזק. קלאסיקה.</p>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">₪180</span>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-3 bg-white shadow-sm">
+                                <h3 class="font-bold text-gray-800">MTK פרימיום</h3>
+                                <p class="text-xs text-gray-500 mb-2">מתקפל דור 4, מקשים נוחים.</p>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">₪320</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- צור קשר -->
+                    <div id="contact-section" class="section">
+                        <div class="text-center mb-6 mt-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                            </div>
+                            <h2 class="text-xl font-bold">דברו איתנו</h2>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4 text-sm space-y-4 border border-gray-200">
+                            <div class="flex items-center">
+                                <span class="text-lg ml-3">📞</span> 
+                                <span class="font-bold">052-1234567</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg ml-3">📍</span> 
+                                <span>רבי עקיבא 50, בני ברק</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg ml-3">🕒</span> 
+                                <span>א'-ה': 10:00 - 22:00</span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4 text-xs text-gray-500">לחץ על הירוק לחיוג</div>
+                    </div>
+
+                    <!-- אודות -->
+                    <div id="about-section" class="section">
+                        <h2 class="text-lg font-bold mb-3 border-b-2 border-blue-500 pb-1 inline-block mt-2">מי אנחנו</h2>
+                        <div class="text-sm text-gray-700 leading-relaxed space-y-3 mt-2">
+                            <p>
+                                <strong>כהן תקשורת</strong> מתמחים בשיווק מכשירי סלולר כשרים המאושרים על ידי ועדת הרבנים לענייני תקשורת.
+                            </p>
+                            <p>
+                                אנו דוגלים בשירות אמין, אדיב ומקצועי. אצלנו תמצאו מגוון רחב של מכשירים ממיטב החברות, מגני מסך, כיסויים ואביזרים נלווים.
+                            </p>
+                            <p class="bg-yellow-50 p-2 rounded border border-yellow-200 text-center font-bold">
+                                המחירים הזולים בארץ!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- משחק הנחש (ההפתעה!) -->
+                    <div id="snake-section" class="section text-center snake-font">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="font-bold text-sm">סנייק כשר</span>
+                            <span class="font-bold text-sm">ניקוד: <span id="score">0</span></span>
+                        </div>
+                        <!-- Canvas size matches typical container inner width -->
+                        <canvas id="snakeCanvas" width="220" height="240"></canvas>
+                        
+                        <div id="game-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-80 rounded text-white hidden" style="margin: 15px;">
+                            <h3 class="text-xl font-bold mb-2 text-[#9bbc0f]">המשחק נגמר!</h3>
+                            <p class="mb-4">הגעת ל: <span id="final-score" class="font-bold text-xl">0</span></p>
+                            <p class="text-xs bg-[#0f380f] px-3 py-1 rounded text-[#9bbc0f]">לחץ על 5 להתחלה מחדש</p>
+                        </div>
+
+                        <div class="text-[10px] mt-3 leading-tight opacity-80">
+                            <strong>שליטה:</strong> 2=למעלה, 8=למטה, 4=שמאלה, 6=ימינה<br>
+                            חזור הביתה: מקש אדום
+                        </div>
+                    </div>
+
+                    <!-- התראות -->
+                    <div id="message-overlay" class="hidden absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10">
+                        <div class="text-center p-4">
+                            <div class="text-4xl mb-2">💬</div>
+                            <p id="message-text" class="text-lg font-bold text-gray-800 mb-4"></p>
+                            <p class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded inline-block">לחץ על תפריט לאישור</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- לחצני ניווט -->
+        <div class="nav-keys">
+            <!-- ירוק - חיוג -->
+            <button class="nav-btn nav-btn-call" id="btn-call" onclick="handleBtnClick('call')">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+            </button>
+            <!-- אמצע - תפריט/אישור -->
+            <button class="nav-btn nav-btn-center" id="btn-ok" onclick="handleBtnClick('ok')">
+                <span class="block w-6 h-1 bg-gray-400 rounded-full mb-1"></span>
+                <span class="block w-6 h-1 bg-gray-400 rounded-full"></span>
+            </button>
+            <!-- אדום - סיום/חזור הביתה -->
+            <button class="nav-btn nav-btn-end" id="btn-end" onclick="handleBtnClick('end')">
+                <svg class="w-5 h-5 transform rotate-135" fill="currentColor" viewBox="0 0 20 20" style="transform: rotate(135deg);"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+            </button>
+        </div>
+
+        <!-- לוח מקשים מספרים -->
+        <div class="keypad-container">
+            <button class="key-btn" id="key-1" onclick="handleBtnClick('1')">
+                <span class="key-number">1</span><span class="key-letters">&nbsp;&nbsp;</span>
+            </button>
+            <button class="key-btn" id="key-2" onclick="handleBtnClick('2')">
+                <span class="key-number">2</span><span class="key-letters">א ב ג</span>
+            </button>
+            <button class="key-btn" id="key-3" onclick="handleBtnClick('3')">
+                <span class="key-number">3</span><span class="key-letters">ד ה ו</span>
+            </button>
+            
+            <button class="key-btn" id="key-4" onclick="handleBtnClick('4')">
+                <span class="key-number">4</span><span class="key-letters">ז ח ט</span>
+            </button>
+            <button class="key-btn" id="key-5" onclick="handleBtnClick('5')">
+                <span class="key-number">5</span><span class="key-letters">י כ ל</span>
+            </button>
+            <button class="key-btn" id="key-6" onclick="handleBtnClick('6')">
+                <span class="key-number">6</span><span class="key-letters">מ נ ס</span>
+            </button>
+
+            <button class="key-btn" id="key-7" onclick="handleBtnClick('7')">
+                <span class="key-number">7</span><span class="key-letters">ע פ צ</span>
+            </button>
+            <button class="key-btn" id="key-8" onclick="handleBtnClick('8')">
+                <span class="key-number">8</span><span class="key-letters">ק ר ש</span>
+            </button>
+            <button class="key-btn" id="key-9" onclick="handleBtnClick('9')">
+                <span class="key-number">9</span><span class="key-letters">ת</span>
+            </button>
+
+            <button class="key-btn" id="key-star" onclick="handleBtnClick('*')">
+                <span class="key-number">*</span><span class="key-letters"></span>
+            </button>
+            <button class="key-btn" id="key-0" onclick="handleBtnClick('0')">
+                <span class="key-number">0</span><span class="key-letters">_</span>
+            </button>
+            <button class="key-btn" id="key-hash" onclick="handleBtnClick('#')">
+                <span class="key-number">#</span><span class="key-letters"></span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- מערכת שעון ---
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours(); let m = now.getMinutes();
+            if (h < 10) h = '0' + h; if (m < 10) m = '0' + m;
+            document.getElementById('clock').textContent = h + ':' + m;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // --- ניהול מצבי מסך ---
+        let currentScreen = 'home';
+        let isAlertOpen = false;
+        
+        function changeScreen(screenId) {
+            // הסתרת התראות
+            closeAlert();
+            
+            // הפסקת משחק הנחש אם יוצאים ממנו
+            if(currentScreen === 'snake' && screenId !== 'snake') {
+                stopGame();
+                document.getElementById('display-screen').classList.remove('retro-mode');
+            }
+
+            // עדכון מחלקות
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(screenId + '-section').classList.add('active');
+            currentScreen = screenId;
+
+            // הפעלת מצב רטרו לסנייק
+            if(screenId === 'snake') {
+                document.getElementById('display-screen').classList.add('retro-mode');
+                initGame();
+            }
+        }
+
+        // --- ניהול לחיצות מרכזי ---
+        function handleBtnClick(key) {
+            // אפקט לחיצה ויזואלי (שימושי כשלוחצים מהמקלדת)
+            const btnEl = document.getElementById(key === '*' ? 'key-star' : key === '#' ? 'key-hash' : `key-${key}`) || document.getElementById(`btn-${key}`);
+            if(btnEl) {
+                btnEl.classList.add('active-press');
+                setTimeout(() => btnEl.classList.remove('active-press'), 100);
+            }
+
+            // אם יש הודעה פתוחה, כפתור OK או End סוגר אותה
+            if (isAlertOpen) {
+                if (key === 'ok' || key === 'end') closeAlert();
+                return; 
+            }
+
+            // כפתור אדום תמיד מחזיר הביתה
+            if (key === 'end') {
+                changeScreen('home');
+                return;
+            }
+
+            // כפתור ירוק (חיוג)
+            if (key === 'call') {
+                showAlert('מחייג לבית העסק...');
+                return;
+            }
+
+            // ניהול לפי המסך הנוכחי
+            if (currentScreen === 'home') {
+                if (key === '1') changeScreen('catalog');
+                else if (key === '2') changeScreen('about');
+                else if (key === '3') changeScreen('contact');
+                else if (key === '5') changeScreen('snake'); // כניסה להפתעה
+                else if (key !== 'ok') showAlert('מקש לא פעיל במסך זה');
+            } 
+            else if (currentScreen === 'snake') {
+                // העברת שליטה למשחק
+                handleSnakeInput(key);
+            }
+            else {
+                // במסכים אחרים
+                if (key === 'ok') changeScreen('home');
+                else if (['1','2','3','4','5','6','7','8','9','0','*','#'].includes(key)) {
+                    // התעלמות מלחיצות סתמיות במסכי מידע
+                }
+            }
+        }
+
+        // --- התראות ---
+        function showAlert(text) {
+            document.getElementById('message-text').textContent = text;
+            document.getElementById('message-overlay').classList.remove('hidden');
+            isAlertOpen = true;
+        }
+        function closeAlert() {
+            document.getElementById('message-overlay').classList.add('hidden');
+            isAlertOpen = false;
+        }
+
+        // --- קליטת מקלדת מחשב (לנוחות) ---
+        document.addEventListener('keydown', (e) => {
+            const keyMap = {
+                '1': '1', '2': '2', '3': '3', '4': '4', '5': '5',
+                '6': '6', '7': '7', '8': '8', '9': '9', '0': '0',
+                '*': '*', '#': '#', 'Enter': 'ok', 'Backspace': 'end', 'Escape': 'end',
+                'ArrowUp': '2', 'ArrowDown': '8', 'ArrowLeft': '4', 'ArrowRight': '6' // חצים מתורגמים למספרים למשחק
+            };
+            if(keyMap[e.key]) {
+                handleBtnClick(keyMap[e.key]);
+            }
+        });
+
+
+        // ==========================================
+        //             משחק סנייק (SNAKE)
+        // ==========================================
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 10;
+        let snake = [];
+        let food = {};
+        let dx = 0;
+        let dy = 0;
+        let score = 0;
+        let gameLoop;
+        let isGameOver = false;
+
+        function initGame() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            snake = [
+                {x: 10, y: 10},
+                {x: 10, y: 11},
+                {x: 10, y: 12}
+            ];
+            dx = 0; dy = -1; // מתחיל למעלה
+            score = 0;
+            document.getElementById('score').innerText = score;
+            isGameOver = false;
+            spawnFood();
+            
+            clearInterval(gameLoop);
+            gameLoop = setInterval(updateGame, 150); // מהירות המשחק
+        }
+
+        function stopGame() {
+            clearInterval(gameLoop);
+        }
+
+        function spawnFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                y: Math.floor(Math.random() * (canvas.height / gridSize))
+            };
+            // וידוא שהאוכל לא נופל על הנחש
+            snake.forEach(part => {
+                if (part.x === food.x && part.y === food.y) spawnFood();
+            });
+        }
+
+        function handleSnakeInput(key) {
+            if (isGameOver) {
+                if (key === '5') initGame(); // 5 להתחלה מחדש
+                return;
+            }
+
+            // 2=למעלה, 8=למטה, 4=שמאלה, 6=ימינה
+            // מניעת סיבוב של 180 מעלות
+            if (key === '4' && dx === 0) { dx = -1; dy = 0; }
+            if (key === '6' && dx === 0) { dx = 1; dy = 0; }
+            if (key === '2' && dy === 0) { dx = 0; dy = -1; }
+            if (key === '8' && dy === 0) { dx = 0; dy = 1; }
+        }
+
+        function updateGame() {
+            if(isGameOver) return;
+
+            // חישוב מיקום ראש חדש
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // התנגשות בקירות
+            if (head.x < 0 || head.x >= canvas.width / gridSize || 
+                head.y < 0 || head.y >= canvas.height / gridSize) {
+                return gameOver();
+            }
+
+            // התנגשות בעצמו
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return gameOver();
+                }
+            }
+
+            snake.unshift(head); // הוספת ראש חדש
+
+            // אכילת אוכל
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('score').innerText = score;
+                spawnFood();
+            } else {
+                snake.pop(); // מחיקת זנב אם לא נחל אוכל
+            }
+
+            drawGame();
+        }
+
+        function drawGame() {
+            // ניקוי מסך (צבע הרקע מוגדר בCSS אבל ננקה הכל)
+            ctx.fillStyle = '#9bbc0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // ציור אוכל
+            ctx.fillStyle = '#0f380f';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 1, gridSize - 1);
+
+            // ציור נחש
+            snake.forEach((part, index) => {
+                ctx.fillStyle = index === 0 ? '#0f380f' : '#306230'; // ראש כהה יותר
+                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 1, gridSize - 1);
+            });
+        }
+
+        function gameOver() {
+            isGameOver = true;
+            stopGame();
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-overlay').classList.remove('hidden');
+        }
+
+    </script>
+</body>
+</html>
